@@ -29,7 +29,7 @@
 ├── offline_packages/            # 新增：离线依赖包缓存目录（pip download 产物）
 ├── install.bat                  # 新增：一次性安装脚本
 ├── run.bat                      # 新增：日常自动运行脚本
-├── task_template.xml            # 新增：任务计划程序的任务模板
+├── task_template.xml            # 新增：任务计划程序的任务模板（已废弃删除，见第九节）
 └── logs/                        # 新增：运行日志输出目录
 ```
 
@@ -67,6 +67,10 @@
 4. 脚本运行失败时，日志里要能看出是"环境激活失败"还是"脚本本身报错"，两者报错信息不要混在一起
 
 ## 六、`task_template.xml` 要求
+
+> **注意（2026-10 变更）**：本节的"开机触发器"模板已废弃并从仓库删除，
+> 现行方案使用 `task_guard_template.xml`（登录触发器 + guard.py），详见第九、十节。
+> 需要查看旧模板内容时：`git show v1.0-legacy:task_template.xml`。
 
 - 触发器：开机启动时执行（如需求变化为"用户登录时"也需支持，请做成 install.bat 里可选参数或注释说明如何切换）
 - 操作：指向 `run.bat`（不是直接指向 python.exe，保持入口统一）
@@ -125,8 +129,8 @@
 | `install.bat` | 删除旧 `DTW_AutoRun`（开机任务），改为注册 `DTW_Guard`（登录任务） |
 | `watcher.py` | `watch_folder` 主循环新增停止信号检查（`watcher.stop`），实现"关闭即停止" |
 | `launcher.py` | 接收 `DTW_WATCH_DIR` 环境变量并转成 `--dir`，使 `guard_config.ini` 的 `watch_dir` 真正生效；`--stop` 注明会与守护进程冲突 |
-| `start_watcher.bat` | **已弃用**（保留作调试用）：开头加了说明，路径改为 `%~dp0`，不再写死 `d:\dtw` |
-| `task_template.xml` | **已弃用**（保留作历史参考）：原开机触发器模板，不再由任何脚本使用 |
+| `start_watcher.bat` | **已删除**（原手工启动脚本，写死 `d:\dtw` 且绕过 guard）；需要时从 `v1.0-legacy` 取回 |
+| `task_template.xml` | **已删除**（原开机触发器模板，无任何脚本引用）；需要时从 `v1.0-legacy` 取回 |
 
 ### 9.4 关键配置（`guard_config.ini`）
 
