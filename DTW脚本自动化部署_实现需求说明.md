@@ -127,7 +127,7 @@
 | `guard_config.ini` | 新增：守护配置（目标进程名、轮询间隔、启停延迟等） |
 | `task_guard_template.xml` | 新增：登录触发器任务模板，由 `install.bat` 填入实际绝对路径后导入 |
 | `run_guard.bat` | 新增：手工启动 / 停止 / 查看状态 / 自检守护进程 |
-| `install.bat` | 删除旧 `DTW_AutoRun`（开机任务），改为注册 `DTW_Guard`（登录任务） |
+| `install.bat` | 删除旧 `DTW_AutoRun`（开机任务），改为注册 `DTW_Guard`（登录任务），并在 Step 3.5 立即启动守护（`--no-delay`，装完即可验证） |
 | `watcher.py` | `watch_folder` 主循环新增停止信号检查（`watcher.stop`），实现"关闭即停止" |
 | `launcher.py` | 接收 `DTW_WATCH_DIR` 环境变量并转成 `--dir`，使 `guard_config.ini` 的 `watch_dir` 真正生效；`--stop` 注明会与守护进程冲突 |
 | `start_watcher.bat` | **已删除**（原手工启动脚本，写死 `d:\dtw` 且绕过 guard）；需要时从历史提交 `8be7ee9` 取回（`git show 8be7ee9:start_watcher.bat`） |

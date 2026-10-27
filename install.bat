@@ -202,6 +202,54 @@ if !TASK_RESULT! neq 0 (
 echo [OK]   Task DTW_Guard registered (at log on).
 
 :: ============================================================
+:: Step 3.5: Start the guard right now
+::   A LogonTrigger task only fires at logon. Since install.bat is
+::   usually run after logging in, nothing would be watching the
+::   detection app until the next logon. Start it immediately so the
+::   verification steps in the manual work right away.
+::   --no-delay skips startup_delay (that delay only matters at logon).
+:: ============================================================
+echo.
+echo ============================================================
+echo  [Step 3.5] Start guard now (no need to reboot)
+echo ============================================================
+
+set "PY=%SCRIPT_DIR%\deji\Scripts\python.exe"
+set "GUARD_PID_FILE=%SCRIPT_DIR%\guard.pid"
+
+:: 说明：
+:: 1. LogonTrigger 任务只在登录时触发，而 install.bat 通常在登录后才运行，
+::    因此这里必须立即启动一次守护，否则要到下次登录才开始监测。
+:: 2. --no-delay 跳过 startup_delay（该延迟只为避开登录时的磁盘高峰）。
+:: 3. 必须用 Start-Process 彻底脱离：start /b 会让子进程继承本控制台的
+::    输出管道，脚本结束时会挂住。
+:: 注意：本 if 块内不要再写 :: 注释，cmd 解析块内标签会出错。
+if exist "%PY%" (
+    echo [INFO] Stopping any previous guard instance...
+    "%PY%" "%GUARD_PY%" --stop >nul 2>&1
+    del /q "%GUARD_PID_FILE%" >nul 2>&1
+    echo [INFO] Starting guard in background...
+    powershell -NoProfile -Command "Start-Process -FilePath '%PYTHONW%' -ArgumentList '\"%GUARD_PY%\"','--no-delay' -WindowStyle Hidden" >nul 2>&1
+    echo [INFO] Waiting for the guard to come up...
+    set "GPID="
+    for /l %%n in (1,1,20) do (
+        if not defined GPID (
+            if exist "%GUARD_PID_FILE%" set /p GPID=<"%GUARD_PID_FILE%"
+            if not defined GPID ping -n 2 127.0.0.1 >nul
+        )
+    )
+    if defined GPID (
+        echo [OK]   Guard running, pid=!GPID!
+    ) else (
+        echo [WARN] Guard did not report a pid within ~20s.
+        echo [HINT] See logs\guard_YYYYMMDD.log, or run: run_guard.bat console
+    )
+) else (
+    echo [WARN] python.exe not found, skip immediate start.
+    echo [INFO] The guard will start automatically at next logon.
+)
+
+:: ============================================================
 :: Step 4: Create log dir
 :: ============================================================
 echo.
@@ -230,7 +278,7 @@ echo    Virtual env : %SCRIPT_DIR%\deji
 echo    Dependencies: numpy (verified OK)
 echo    Task name   : DTW_Guard  (trigger: at log on)
 echo    Task account: %TASK_USER%
-echo    Guard       : %SCRIPT_DIR%\guard.py  (auto-started at logon)
+echo    Guard       : %SCRIPT_DIR%\guard.py  (already started now, also starts at logon)
 echo    Watcher     : started only while the detection app is running
 echo    App process : see guard_config.ini  -^> app_process
 echo    Run script  : %SCRIPT_DIR%\run.bat  (manual / used by guard)
@@ -238,15 +286,18 @@ echo    Log dir     : %SCRIPT_DIR%\logs
 echo ============================================================
 echo.
 echo [NOTE] No task runs at boot anymore, so the machine starts clean.
-echo        At logon a tiny guard starts; it launches the watcher when
-echo        the detection software opens, and stops it when it closes.
+echo        The guard is running NOW and will also start at each logon.
+echo        It launches the watcher when the detection software opens,
+echo        and stops it when it closes. You do NOT need to run
+echo        run.bat or run_guard.bat in daily use.
 echo.
-echo [NEXT] To test:
-echo         1. Open the detection software, check d:\data\watcher_status.txt
-echo            shows status=ready and logs\YYYY-MM-DD.log gets a new entry
+echo [NEXT] To verify (no reboot needed):
+echo         1. Open the detection software, wait 5-10s, then check
+echo            d:\data\watcher_status.txt shows status=ready
 echo         2. Close the detection software, watcher stops within ~5s
-echo         3. If it does not react, run: run_guard.bat list
-echo            then put the right exe name into guard_config.ini
+echo         3. If it does not react: run  run_guard.bat test
+echo            then run  run_guard.bat list  to find the real exe name
+echo            and correct app_process in guard_config.ini
 echo.
 echo ============================================================
 pause

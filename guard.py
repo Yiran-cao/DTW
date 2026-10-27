@@ -682,6 +682,8 @@ def main(argv):
     parser.add_argument('--list', action='store_true', help='列出当前进程名与窗口标题')
     parser.add_argument('--dry-run', action='store_true', help='只记录将要执行的动作')
     parser.add_argument('--stop', action='store_true', help='停止守护进程与 watcher')
+    parser.add_argument('--no-delay', action='store_true',
+                        help='忽略 startup_delay，立即开始检测（装机后手工启动时用）')
     parser.add_argument('--config', default=None, help='指定配置文件路径')
     args = parser.parse_args(argv)
 
@@ -690,6 +692,8 @@ def main(argv):
         return 0
 
     cfg = load_config(args.config)
+    if args.no_delay:
+        cfg.startup_delay = 0
 
     if args.once:
         running, why = is_app_running(cfg)

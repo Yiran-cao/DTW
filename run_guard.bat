@@ -17,8 +17,14 @@ goto START
 if not exist "%PYW%" goto NOVENV
 if not exist "%GUARD%" goto NOGUARD
 echo [INFO] Starting guard in background (no window)...
-start "" "%PYW%" "%GUARD%"
-echo [OK]   Guard started.
+start "" "%PYW%" "%GUARD%" --no-delay
+ping -n 4 127.0.0.1 >nul
+if exist "%~dp0guard.pid" (
+    set /p GPID=<"%~dp0guard.pid"
+    echo [OK]   Guard running, pid=!GPID!
+) else (
+    echo [WARN] guard.pid not found. Check logs\guard_YYYYMMDD.log
+)
 echo [INFO] It starts the watcher only while the detection app is running.
 echo [INFO] Log: logs\guard_YYYYMMDD.log
 goto END
@@ -27,7 +33,7 @@ goto END
 if not exist "%PY%" goto NOVENV
 echo [INFO] Running guard in this window. Press Ctrl+C to stop.
 echo.
-"%PY%" "%GUARD%"
+"%PY%" "%GUARD%" --no-delay
 echo.
 pause
 goto END
