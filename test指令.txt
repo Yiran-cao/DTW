@@ -1,0 +1,9 @@
+日常使用（直接启动运行）：
+cd d:\dtw
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
+
+. .\deji.\Scripts\Activate.ps1
+
+python watcher.py
+

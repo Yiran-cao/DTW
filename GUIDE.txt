@@ -1,0 +1,27 @@
+##安装运行操作流程##
+1.安装offline_packages中的vc++，点击修复；
+
+2.双击install，完成环境和依赖的创建安装；
+  可以看到deji的文件夹（环境），以及点开是装好的依赖
+
+3.双击run，完成自动选波程序的后台启动；
+  可以通过data test下的watcher status确认启动状态，  若显示ready，即代表启动成功
+
+##装机目录##(u盘)
+- .vscode
+- offline_packages
+  - numpy-1.19.5-cp36-cp36m-win32.whl
+  - VC_redist.x86
+  - README
+- GUIDE.txt
+- install.bat
+- launcher.py
+- requirements.txt
+- ruleLV.txt
+- ruleRV.txt
+- run.bat
+- task_template.xml
+- watcher.py
+ 
+##自动监测数据更新测试##
+可以通过手动修改data test下的数据txt来测试选波程序的运行，例如上一轮检测的是左侧流速(LV)，输出为1,3,5，任意修改右侧流速(RV)数据，若输出改变，则代表程序可以自动监测到波形数据的更新
