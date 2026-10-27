@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <!--
+    【已停用】本模板使用"开机触发器 BootTrigger"，开机即拉起 run.bat，
+    在老机器（Win7 + 机械硬盘）上会造成卡顿甚至蓝屏。
+    现行方案见 task_guard_template.xml（登录时启动 guard.py，跟随检测软件启停）。
+  -->
+  <RegistrationInfo>
+    <Description>DTW 自动选波 — 开机自启动任务</Description>
+    <Author>DTW Installer</Author>
+  </RegistrationInfo>
+  <Triggers>
+    <!--
+      开机启动触发器 (BootTrigger)
+      如需改为"用户登录时"启动，将 BootTrigger 改为 LogonTrigger：
+      <LogonTrigger>
+        <Enabled>true</Enabled>
+      </LogonTrigger>
+    -->
+    <BootTrigger>
+      <Enabled>true</Enabled>
+    </BootTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <!-- 以最高权限运行 -->
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <!-- 允许手动启动 -->
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <!-- 启用任务 -->
+    <Enabled>true</Enabled>
+    <!-- 即使使用电池也运行（笔记本场景） -->
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <!-- 任务失败后不自动删除 -->
+    <DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter>
+    <!-- 如果任务已在运行，不启动新实例 -->
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <!--
+        __RUN_BAT_PATH__ 是占位符，由 install.bat 在目标机器上
+        动态替换为 run.bat 的实际绝对路径（例如 D:\dtw\run.bat）
+      -->
+      <Command>__RUN_BAT_PATH__</Command>
+      <WorkingDirectory>__SCRIPT_DIR__</WorkingDirectory>
+    </Exec>
+  </Actions>
+</Task>

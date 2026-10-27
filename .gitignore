@@ -1,0 +1,19 @@
+﻿# ---- 运行产物（每台机器本地生成，不入库）----
+deji/
+logs/
+__pycache__/
+*.pyc
+*.pid
+guard.lock
+watcher.stop
+task_guard.xml
+.watcher.lock
+
+# ---- 离线安装包二进制（与 U 盘部署包一起分发，不入库）----
+offline_packages/*.whl
+offline_packages/*.exe
+
+# ---- 编辑器 ----
+.vscode/
+Thumbs.db
+Desktop.ini
