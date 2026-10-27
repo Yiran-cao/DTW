@@ -70,7 +70,8 @@
 
 > **注意（2026-10 变更）**：本节的"开机触发器"模板已废弃并从仓库删除，
 > 现行方案使用 `task_guard_template.xml`（登录触发器 + guard.py），详见第九、十节。
-> 需要查看旧模板内容时：`git show v1.0-legacy:task_template.xml`。
+> 需要查看旧模板内容时：`git show v1:task_template.xml`
+> （`v1` 是现场实际部署的旧版本快照，与 U 盘部署目录源码逐字节一致）。
 
 - 触发器：开机启动时执行（如需求变化为"用户登录时"也需支持，请做成 install.bat 里可选参数或注释说明如何切换）
 - 操作：指向 `run.bat`（不是直接指向 python.exe，保持入口统一）
@@ -130,7 +131,7 @@
 | `watcher.py` | `watch_folder` 主循环新增停止信号检查（`watcher.stop`），实现"关闭即停止" |
 | `launcher.py` | 接收 `DTW_WATCH_DIR` 环境变量并转成 `--dir`，使 `guard_config.ini` 的 `watch_dir` 真正生效；`--stop` 注明会与守护进程冲突 |
 | `start_watcher.bat` | **已删除**（原手工启动脚本，写死 `d:\dtw` 且绕过 guard）；需要时从 `v1.0-legacy` 取回 |
-| `task_template.xml` | **已删除**（原开机触发器模板，无任何脚本引用）；需要时从 `v1.0-legacy` 取回 |
+| `task_template.xml` | **已删除**（原开机触发器模板，无任何脚本引用）；需要时从 `v1` 取回（`git show v1:task_template.xml`）。`v1` 为现场实际部署的旧版本快照，`v1.0-legacy` 为更早的仓库历史快照 |
 
 ### 9.4 关键配置（`guard_config.ini`）
 
