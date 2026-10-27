@@ -130,8 +130,8 @@
 | `install.bat` | 删除旧 `DTW_AutoRun`（开机任务），改为注册 `DTW_Guard`（登录任务） |
 | `watcher.py` | `watch_folder` 主循环新增停止信号检查（`watcher.stop`），实现"关闭即停止" |
 | `launcher.py` | 接收 `DTW_WATCH_DIR` 环境变量并转成 `--dir`，使 `guard_config.ini` 的 `watch_dir` 真正生效；`--stop` 注明会与守护进程冲突 |
-| `start_watcher.bat` | **已删除**（原手工启动脚本，写死 `d:\dtw` 且绕过 guard）；需要时从 `v1.0-legacy` 取回 |
-| `task_template.xml` | **已删除**（原开机触发器模板，无任何脚本引用）；需要时从 `v1` 取回（`git show v1:task_template.xml`）。`v1` 为现场实际部署的旧版本快照，`v1.0-legacy` 为更早的仓库历史快照 |
+| `start_watcher.bat` | **已删除**（原手工启动脚本，写死 `d:\dtw` 且绕过 guard）；需要时从历史提交 `8be7ee9` 取回（`git show 8be7ee9:start_watcher.bat`） |
+| `task_template.xml` | **已删除**（原开机触发器模板，无任何脚本引用）；需要时从 `v1` 取回（`git show v1:task_template.xml`）。`v1` 为现场实际部署的旧版本快照 |
 
 ### 9.4 关键配置（`guard_config.ini`）
 
